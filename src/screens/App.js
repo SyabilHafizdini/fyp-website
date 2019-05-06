@@ -6,11 +6,15 @@ import WebFont from 'webfontloader';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+import TableHead from '@material-ui/core/TableHead';
+import Paper from '@material-ui/core/Paper';
 import './App.css';
-import { nominalTypeHack } from 'prop-types';
 
 WebFont.load({
   google: {
@@ -19,12 +23,18 @@ WebFont.load({
 });
 
 
-const styles = {
-  appBar: {
-    boxShadow: "none",
+const styles = theme => ({
+  root: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
   },
-
-};
+  table: {
+    minWidth: 500,
+  },
+  tableWrapper: {
+    overflowX: 'auto',
+  },
+});
 
 class App extends React.Component {
   constructor() {
@@ -35,6 +45,8 @@ class App extends React.Component {
       graphData: [],
       lastEntry: {},
       intervalIsSet: false,
+      page: 0,
+      rowsPerPage: 5,
     };
   }
 
@@ -62,12 +74,78 @@ class App extends React.Component {
       });
   };
 
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ page: 0, rowsPerPage: event.target.value });
+  };
+
   
 
   render() {
     const { data } = this.state;
     const { graphData } = this.state;
+    const {rowsPerPage, page } = this.state;
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
     const {lastEntry} = this.state;
+
+    const displayTable = (
+      <Paper className={styles.root}>
+        <div className={styles.tableWrapper}>
+          <Table className={styles.table}>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell align="right">Temperature</TableCell>
+                <TableCell align="right">Humidity</TableCell>
+                <TableCell align="right">Time</TableCell>
+              </TableRow>
+           </TableHead>
+            <TableBody>
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+                <TableRow key={row._id}>
+                  <TableCell component="th" scope="row">
+                    {row._id}
+                  </TableCell>
+                  <TableCell align="right">{row.temperature}</TableCell>
+                  <TableCell align="right">{row.humidity}</TableCell>
+                  <TableCell align="right">{row.time}</TableCell>                  
+                </TableRow>
+              ))}
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 48 * emptyRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  colSpan={3}
+                  count={data.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  backIconButtonProps={{
+                    'aria-label': 'Previous Page',
+                  }}
+                  nextIconButtonProps={{
+                    'aria-label': 'Next Page',
+                  }}
+                  onChangePage={this.handleChangePage}
+                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </div>
+      </Paper>
+    );
 
     const renderTemperatureChart = (
       <BarChart
@@ -93,7 +171,7 @@ class App extends React.Component {
         <AppBar position="absolute" color="white" className="appBar">
           <Toolbar>
             <div className="productLogo">
-              <Typography variant="h6" color="#942121">
+              <Typography variant="h6" color="inherit">
                 Temp Humid
               </Typography>
             </div>
@@ -105,40 +183,33 @@ class App extends React.Component {
       <div className="background">
         { TopBar }
         <div className="GraphCard">
-          <Card>
+          <Card style={{width: 410}}>
             <CardContent style={{marginLeft: -50, marginRight: -25, marginTop: -25, marginBottom: -10}}>
-              <Typography variant="h8" color="#942121" className="GraphCardTitle">
+              <Typography variant="h5" color="inherit" className="GraphCardTitle">
                 RaspberryPi1
             </Typography>
             {renderTemperatureChart}
             </CardContent>
           </Card>
-          <Card>
-            <CardContent style={{ marginLeft: -50, marginRight: -25, marginTop: -25, marginBottom: -10 }}>
-              <Typography variant="h8" color="#942121" className="GraphCardTitle">
-                RaspberryPi1
-            </Typography>
-              {renderTemperatureChart}
+          <Card style={{ width: 410}}>
+            <CardContent>
+              <Typography variant="h2" color="inherit" className="GraphCardTitle">
+              [Last Entry]
+              </Typography>
+              <Typography variant="h8" color="inherit" className="GraphCardTitle">
+                Temperature: {lastEntry.temperature}°C
+              </Typography>
+              <Typography variant="h8" color="inherit" className="GraphCardTitle">
+                Humidity: {lastEntry.humidity}%
+              </Typography>
+              <Typography variant="h8" color="inherit" className="GraphCardTitle">
+                Time: {lastEntry.time}
+              </Typography>
             </CardContent>
           </Card>
         </div>
-        <h1>Total number of data: {data.length}</h1>
-        <h1>Last entry: {lastEntry.temperature}°C </h1>
-        <div className="entriesList">
-          {data.length <= 0
-            ? "NO DB ENTRIES YET"
-            : data.map(dat => (
-              <Card>
-                <CardContent>
-                  <Typography variant="h8" color="#942121" className="GraphCardTitle">
-                    ID: {dat._id} <br />
-                    Temperature: {dat.temperature}°C <br />
-                    Humidity: {dat.humidity}% <br />
-                    Time: {dat.time} <br />
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
+        <div style={{ marginLeft: "7%", marginRight: "7%", marginBottom: "7%"}}>
+          {displayTable}
         </div>
       </div>
     );

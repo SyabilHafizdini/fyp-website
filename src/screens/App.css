@@ -28,27 +28,29 @@
 }
 
 .GraphCard {
-  width: 300;
   padding: 9%;
   display: flex;
   justify-content: space-evenly ;
+    color: #2c2c2c;
+}
+
+.LastEntryCard {
+  width: 300;
 }
 
 .GraphCardTitle {
   text-align: center;
-  color: #0D93D2;
-  padding-top: 15px;
+  padding-top: 4%;
 }
 
 .entriesList {
-  display: flex;
-  justify-content: space-evenly;
+  width: 300px;
 }
 
 .appBar {
-    position: 'relative';
     box-shadow: 'none';
     background-color: 'white';
+    width: 100%;
   }
 
   .productLogo {
