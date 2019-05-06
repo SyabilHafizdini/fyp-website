@@ -23,6 +23,48 @@
   color: #61dafb;
 }
 
+.background {
+  background-color: #f5f5f5;
+}
+
+.GraphCard {
+  width: 300;
+  padding: 9%;
+  display: flex;
+  justify-content: space-evenly ;
+}
+
+.GraphCardTitle {
+  text-align: center;
+  color: #0D93D2;
+  padding-top: 15px;
+}
+
+.entriesList {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.appBar {
+    position: 'relative';
+    box-shadow: 'none';
+    background-color: 'white';
+  }
+
+  .productLogo {
+    display: 'inline-block';
+    border-right: 1px solid #d5d5d5;
+    margin-right: 32;
+    padding-right: 24px;
+  }
+
+  .appBar {
+    position: relative;
+    box-shadow: none !important;
+    border-bottom: 1px solid #d5d5d5;
+    background-color: black;
+  }
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
