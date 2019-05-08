@@ -97,21 +97,22 @@ class App extends React.Component {
           <Table className={styles.table}>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
+                <TableCell>Time</TableCell>
+                <TableCell align="right">Date</TableCell>
                 <TableCell align="right">Temperature</TableCell>
                 <TableCell align="right">Humidity</TableCell>
-                <TableCell align="right">Time</TableCell>
               </TableRow>
            </TableHead>
             <TableBody>
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-                <TableRow key={row._id}>
+                <TableRow key={row.time}>
                   <TableCell component="th" scope="row">
-                    {row._id}
+                    {row.time}
                   </TableCell>
-                  <TableCell align="right">{row.temperature}</TableCell>
-                  <TableCell align="right">{row.humidity}</TableCell>
-                  <TableCell align="right">{row.time}</TableCell>                  
+                  <TableCell align="right">{row.date}</TableCell>                  
+                  <TableCell align="right">{row.temperature}°C</TableCell>
+                  <TableCell align="right">{row.humidity}%</TableCell>
+               
                 </TableRow>
               ))}
               {emptyRows > 0 && (
@@ -197,14 +198,17 @@ class App extends React.Component {
               [Last Entry]
               </Typography>
               <Typography variant="h8" color="inherit" className="GraphCardTitle">
+                Time: {lastEntry.time}
+              </Typography>
+              <Typography variant="h8" color="inherit" className="GraphCardTitle">
+                Date: {lastEntry.date}
+              </Typography>               
+              <Typography variant="h8" color="inherit" className="GraphCardTitle">
                 Temperature: {lastEntry.temperature}°C
               </Typography>
               <Typography variant="h8" color="inherit" className="GraphCardTitle">
                 Humidity: {lastEntry.humidity}%
-              </Typography>
-              <Typography variant="h8" color="inherit" className="GraphCardTitle">
-                Time: {lastEntry.time}
-              </Typography>
+              </Typography>             
             </CardContent>
           </Card>
         </div>
