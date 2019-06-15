@@ -55,6 +55,7 @@ class App extends React.Component {
   // then we incorporate a polling logic so that we can easily see if our db has 
   // changed and implement those changes into our UI
   componentDidMount() {
+    document.title = "our FYP website";
     this.getDataFromDb();
     if (!this.state.intervalIsSet) {
       let interval = setInterval(this.getDataFromDb, 1000);
@@ -65,10 +66,10 @@ class App extends React.Component {
   // our first get method that uses our backend api to 
   // fetch data from our data base
   getDataFromDb = () => {
-    fetch("http://192.168.1.189:3000/data")
+    fetch("http://192.168.1.109:3000/data/all")
       .then(data => data.json())
       .then(res => {
-        this.setState({ data: res , lastEntry: res[0], graphData: res.splice(0, 5)});
+        this.setState({ data: res , lastEntry: res[0], graphData: res.slice(0, 5)});
       }).catch(function() {
         console.log("error");
       });
@@ -105,11 +106,11 @@ class App extends React.Component {
            </TableHead>
             <TableBody>
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-                <TableRow key={row.time}>
+                <TableRow key={row.datetime.split(' ')[1]}>
                   <TableCell component="th" scope="row">
-                    {row.time}
+                    {row.datetime.split(' ')[1]}
                   </TableCell>
-                  <TableCell align="right">{row.date}</TableCell>                  
+                  <TableCell align="right">{row.datetime.split(' ')[0]}</TableCell>                  
                   <TableCell align="right">{row.temperature}°C</TableCell>
                   <TableCell align="right">{row.humidity}%</TableCell>
                
@@ -158,7 +159,7 @@ class App extends React.Component {
         }}
       >
         <CartesianGrid strokeDasharray="1 1" />
-        <XAxis dataKey="time" />
+        <XAxis dataKey="datetime" tickFormatter={(tickItem) => tickItem.split(' ')[1]} />
         <YAxis interval={0}/>
         <Tooltip />
         <Legend />
@@ -192,16 +193,16 @@ class App extends React.Component {
             {renderTemperatureChart}
             </CardContent>
           </Card>
-          <Card style={{ width: 410}}>
+          {/* <Card style={{ width: 410}}>
             <CardContent>
               <Typography variant="h2" color="inherit" className="GraphCardTitle">
               [Last Entry]
               </Typography>
               <Typography variant="h8" color="inherit" className="GraphCardTitle">
-                Time: {lastEntry.time}
+                Time: {lastEntry.datetime.split(' ')[1]}
               </Typography>
               <Typography variant="h8" color="inherit" className="GraphCardTitle">
-                Date: {lastEntry.date}
+                Date: {lastEntry.datetime.split(' ')[0]}
               </Typography>               
               <Typography variant="h8" color="inherit" className="GraphCardTitle">
                 Temperature: {lastEntry.temperature}°C
@@ -210,7 +211,7 @@ class App extends React.Component {
                 Humidity: {lastEntry.humidity}%
               </Typography>             
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
         <div style={{ marginLeft: "7%", marginRight: "7%", marginBottom: "7%"}}>
           {displayTable}
