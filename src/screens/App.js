@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import { BrowserRouter, Router, Route, Link, NavLink } from "react-router-dom";
 import { CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar, BarChart } from 'recharts';
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -14,7 +15,10 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import './App.css';
+import LoginPage from './Login'
+
 
 WebFont.load({
   google: {
@@ -36,31 +40,77 @@ const styles = theme => ({
   },
 });
 
-class App extends React.Component {
+
+class Home extends React.Component {
+  
   constructor() {
     super();
     // initialize our state 
     this.state = {
       data: [],
+      dates: [],
       graphData: [],
       lastEntry: {},
+      dateToShow: "",
       intervalIsSet: false,
       page: 0,
       rowsPerPage: 5,
+      isLoggedIn: false
     };
   }
 
+    // when component mounts, first thing it does is fetch all existing data in our db
 
-  // when component mounts, first thing it does is fetch all existing data in our db
-  // then we incorporate a polling logic so that we can easily see if our db has 
-  // changed and implement those changes into our UI
+  handleLoggedInStatus = (isLoggedIn) => {
+    this.setState({isLoggedIn});
+  }
+
+  getIsLoggedIn = () => {
+    return this.state.isLoggedIn;
+  }
+
+  render() {
+    const TopBar = (
+      <div className="appBar"> 
+        <AppBar position="static" color="white" className="appBar">
+          <Toolbar>
+            <div className="productLogo">
+            <Button edge="start" color="inherit" component={Link} to="/">
+                <Typography variant="h6" color="inherit">
+                  Temp Humid
+                </Typography>
+              </Button>
+            </div>
+            <Button color="inherit" component={Link} to="/Home">Home</Button>
+            <Button color="inherit" component={Link} to="/Login" style={{marginLeft: "83%"}}>{this.state.isLoggedIn ? "Log out" : "Login"} </Button>
+          </Toolbar>
+        </AppBar>
+
+        <Route exact path="/Home" render = {(routeProps) => (<HomeContent {...this.state}/>)} />
+        <Route exact path="/Login" render = {(routeProps) => (<LoginPage handleLoggedInStatus= {this.handleLoggedInStatus} getIsLoggedIn = {this.getIsLoggedIn} />)} />
+      </div>
+    );
+
+    return (
+      <div className="background">
+        { TopBar }
+      </div>
+    );
+  }
+}
+
+class HomeContent extends React.Component {
+
+  constructor(props) {
+    super(props);
+    // initialize our state 
+    this.state = {...this.props};
+  }
+
   componentDidMount() {
     document.title = "our FYP website";
-    this.getDataFromDb();
-    if (!this.state.intervalIsSet) {
-      let interval = setInterval(this.getDataFromDb, 1000);
-      this.setState({ intervalIsSet: interval });
-    }
+    setInterval(this.getDataFromDate, 1000);
+    setInterval(this.getDatesFromDb, 1000);
   }
 
   // our first get method that uses our backend api to 
@@ -75,6 +125,26 @@ class App extends React.Component {
       });
   };
 
+  getDatesFromDb = () => {
+    fetch("http://192.168.1.109:3000/data/dates")
+      .then(date => date.json())
+      .then(res => {
+        this.setState({ dates: res});
+      }).catch(function() {
+        console.log("error");
+      });
+  }
+
+  getDataFromDate = () => {
+    fetch(`http://192.168.1.109:3000/data/date?date=${this.state.dateToShow}`)
+      .then(date => date.json())
+      .then(res => {
+        this.setState({ data: res , lastEntry: res[0], graphData: res.slice(0, 5)});
+      }).catch(function() {
+        console.log("error");
+      });    
+  }
+
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
@@ -83,10 +153,11 @@ class App extends React.Component {
     this.setState({ page: 0, rowsPerPage: event.target.value });
   };
 
-  
+
 
   render() {
     const { data } = this.state;
+    const { dates } = this.state;
     const { graphData } = this.state;
     const {rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
@@ -168,56 +239,45 @@ class App extends React.Component {
       </BarChart>      
     );
 
-    const TopBar = (
-      <div className="appBar"> 
-        <AppBar position="absolute" color="white" className="appBar">
-          <Toolbar>
-            <div className="productLogo">
-              <Typography variant="h6" color="inherit">
-                Temp Humid
-              </Typography>
+    const showDateData = (date) => {
+      this.setState({dateToShow: date});
+    }
+
+    const displayDates = (
+      dates.map(dateObj => 
+        <Button variant="outlined" size="large" color="primary" onClick={() => showDateData(dateObj.date)}>{dateObj.date}</Button>
+      )
+    );
+
+    if (this.state.isLoggedIn === false) {
+      return(
+        <div className="background">
+          <div className="LogInError">
+            <h1>Please log in</h1>      
+          </div>
+        </div>
+      );
+    } else {
+      return(
+        <div className="background">
+          <div className="GraphCard">
+              <Card style={{width: 410}}>
+                <CardContent style={{marginLeft: -50, marginRight: -25, marginTop: -25, marginBottom: -10}}>
+                  <Typography variant="h5" color="inherit" className="GraphCardTitle">
+                    RaspberryPi1
+                </Typography>
+                {renderTemperatureChart}
+                </CardContent>
+              </Card>
+              {displayDates}
             </div>
-          </Toolbar>
-        </AppBar>
-      </div>
-    );
-    return (
-      <div className="background">
-        { TopBar }
-        <div className="GraphCard">
-          <Card style={{width: 410}}>
-            <CardContent style={{marginLeft: -50, marginRight: -25, marginTop: -25, marginBottom: -10}}>
-              <Typography variant="h5" color="inherit" className="GraphCardTitle">
-                RaspberryPi1
-            </Typography>
-            {renderTemperatureChart}
-            </CardContent>
-          </Card>
-          {/* <Card style={{ width: 410}}>
-            <CardContent>
-              <Typography variant="h2" color="inherit" className="GraphCardTitle">
-              [Last Entry]
-              </Typography>
-              <Typography variant="h8" color="inherit" className="GraphCardTitle">
-                Time: {lastEntry.datetime.split(' ')[1]}
-              </Typography>
-              <Typography variant="h8" color="inherit" className="GraphCardTitle">
-                Date: {lastEntry.datetime.split(' ')[0]}
-              </Typography>               
-              <Typography variant="h8" color="inherit" className="GraphCardTitle">
-                Temperature: {lastEntry.temperature}°C
-              </Typography>
-              <Typography variant="h8" color="inherit" className="GraphCardTitle">
-                Humidity: {lastEntry.humidity}%
-              </Typography>             
-            </CardContent>
-          </Card> */}
-        </div>
-        <div style={{ marginLeft: "7%", marginRight: "7%", marginBottom: "7%"}}>
-          {displayTable}
-        </div>
-      </div>
-    );
+            <div style={{ marginLeft: "7%", marginRight: "7%", marginBottom: "7%"}}>
+              {displayTable}
+            </div>
+          </div>
+      );
+    }
   }
 }
-export default App;
+
+export default Home;
