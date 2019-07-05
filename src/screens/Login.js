@@ -27,7 +27,7 @@ class LoginPage extends React.Component {
         }
     }
     validateUser = () => {
-        fetch(`http://192.168.1.109:3000/data/user/?username=${this.state.username}&password=${this.state.password}`)
+        fetch(`http://192.168.1.109:3000/api/users/?username=${this.state.username}&password=${this.state.password}`)
           .then(user => user.json())
           .then(res => {
             if (res.length === 0) {
