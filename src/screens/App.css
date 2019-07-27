@@ -30,7 +30,19 @@
 }
 
 .GraphCard {
-  padding: 9%;
+  padding-left: 9%;
+  padding-right: 9%;
+  padding-top: 3%;
+  padding-bottom: 3%;
+  display: flex;
+  justify-content: space-evenly ;
+    color: #2c2c2c;
+}
+
+.GraphCardHeader {
+  padding-left: 9%;
+  padding-right: 9%;
+  /* padding-top: 9%; */
   display: flex;
   justify-content: space-evenly ;
     color: #2c2c2c;
@@ -58,8 +70,8 @@
   .productLogo {
     display: 'inline-block';
     border-right: 1px solid #d5d5d5;
-    margin-right: 32;
-    padding-right: 24px;
+    /* margin-right: 32px;
+    padding-right: 15px; */
   }
 
   .appBar {

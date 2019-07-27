@@ -17,7 +17,8 @@ import TableHead from '@material-ui/core/TableHead';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import './App.css';
-import LoginPage from './Login'
+import LoginPage from './Login';
+import ReadingsPage from './Readings';
 
 
 WebFont.load({
@@ -48,10 +49,9 @@ class Home extends React.Component {
     // initialize our state 
     this.state = {
       data: [],
-      dates: [],
       graphData: [],
       lastEntry: {},
-      dateToShow: null,
+      dateToShow: "14/06/19",
       intervalIsSet: false,
       page: 0,
       rowsPerPage: 5,
@@ -77,17 +77,19 @@ class Home extends React.Component {
             <div className="productLogo">
             <Button edge="start" color="inherit" component={Link} to="/">
                 <Typography variant="h6" color="inherit">
-                  Temp Humid
+                  TempHumid
                 </Typography>
               </Button>
             </div>
             <Button color="inherit" component={Link} to="/Home">Home</Button>
-            <Button color="inherit" component={Link} to="/Login" style={{marginLeft: "83%"}}>{this.state.isLoggedIn ? "Log out" : "Login"} </Button>
+            <Button color="inherit" component={Link} to="/Readings">Readings</Button>
+            <Button color="inherit" component={Link} to="/Login" style={{marginLeft: "83%"}}>{this.state.isLoggedIn ? "Logout" : "Login"} </Button>
           </Toolbar>
         </AppBar>
 
         <Route exact path="/Home" render = {(routeProps) => (<HomeContent {...this.state}/>)} />
         <Route exact path="/Login" render = {(routeProps) => (<LoginPage handleLoggedInStatus= {this.handleLoggedInStatus} getIsLoggedIn = {this.getIsLoggedIn} />)} />
+        <Route exact path="/Readings" render = {(routeProps) => (<ReadingsPage {...this.state} />)} />
       </div>
     );
 
@@ -103,7 +105,6 @@ class HomeContent extends React.Component {
 
   constructor(props) {
     super(props);
-    // initialize our state 
     this.state = {...this.props};
   }
 
@@ -220,7 +221,7 @@ class HomeContent extends React.Component {
       </Paper>
     );
 
-    const renderTemperatureChart = (
+    const TemperatureChart = (
       <BarChart
         width={450}
         height={200}
@@ -243,11 +244,6 @@ class HomeContent extends React.Component {
       this.setState({dateToShow: date});
     }
 
-    const displayDates = (
-      dates.map(dateObj => 
-        <Button variant="outlined" size="large" color="primary" onClick={() => showDateData(dateObj.date)}>{dateObj.date}</Button>
-      )
-    );
 
     if (this.state.isLoggedIn === false) {
       return(
@@ -266,10 +262,9 @@ class HomeContent extends React.Component {
                   <Typography variant="h5" color="inherit" className="GraphCardTitle">
                     RaspberryPi1
                 </Typography>
-                {renderTemperatureChart}
+                {TemperatureChart}
                 </CardContent>
               </Card>
-              {displayDates}
             </div>
             <div style={{ marginLeft: "7%", marginRight: "7%", marginBottom: "7%"}}>
               {displayTable}
