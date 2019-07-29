@@ -19,6 +19,7 @@ import Button from '@material-ui/core/Button';
 import './App.css';
 import LoginPage from './Login';
 import ReadingsPage from './Readings';
+import SLA from './SLA';
 
 
 WebFont.load({
@@ -55,7 +56,7 @@ class Home extends React.Component {
       intervalIsSet: false,
       page: 0,
       rowsPerPage: 5,
-      isLoggedIn: true
+      isLoggedIn: false
     };
   }
 
@@ -81,15 +82,17 @@ class Home extends React.Component {
                 </Typography>
               </Button>
             </div>
-            <Button color="inherit" component={Link} to="/Home">Home</Button>
+            <Button color="inherit" component={Link} to="/">Home</Button>
             <Button color="inherit" component={Link} to="/Readings">Readings</Button>
-            <Button color="inherit" component={Link} to="/Login" style={{marginLeft: "83%"}}>{this.state.isLoggedIn ? "Logout" : "Login"} </Button>
+            <Button color="inherit" component={Link} to="/SLA" >SLA</Button>
+            <Button color="inherit" component={Link} to="/Login" style={{marginLeft: "75%"}}>{this.state.isLoggedIn ? "Logout" : "Login"} </Button>
           </Toolbar>
         </AppBar>
 
-        <Route exact path="/Home" render = {(routeProps) => (<HomeContent {...this.state}/>)} />
+        <Route exact path="/" render = {(routeProps) => (<HomeContent {...this.state}/>)} />
         <Route exact path="/Login" render = {(routeProps) => (<LoginPage handleLoggedInStatus= {this.handleLoggedInStatus} getIsLoggedIn = {this.getIsLoggedIn} />)} />
         <Route exact path="/Readings" render = {(routeProps) => (<ReadingsPage {...this.state} />)} />
+        <Route exact path="/SLA" render = {(routeProps) => (<SLA {...this.state}/>)} />
       </div>
     );
 
@@ -245,15 +248,6 @@ class HomeContent extends React.Component {
     }
 
 
-    if (this.state.isLoggedIn === false) {
-      return(
-        <div className="background">
-          <div className="LogInError">
-            <h1>Please log in</h1>      
-          </div>
-        </div>
-      );
-    } else {
       return(
         <div className="background">
           <div className="GraphCard">
@@ -272,7 +266,6 @@ class HomeContent extends React.Component {
           </div>
       );
     }
-  }
 }
 
 export default Home;

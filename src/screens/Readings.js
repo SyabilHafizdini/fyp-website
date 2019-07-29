@@ -151,16 +151,16 @@ class LoginPage extends React.Component {
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, graphData.length - page * rowsPerPage);
 
         const displayStats = (
-            <Paper className={styles.root} style={{width: 410, height: 120}}>
+            <Paper className={styles.root} style={{width: 410, height: 160}}>
                 <div className={styles.tableWrapper}>
-                    <Typography variant="h5" color="inherit" className="GraphCardTitle">
+                    <Typography variant="h6" color="inherit" className="GraphCardTitle">
                         Average:
                     </Typography>                
-                    <Typography variant="h5" color="inherit" className="GraphCardTitle">
-                        {averageTemp}
+                    <Typography variant="h6" color="inherit" className="GraphCardTitle">
+                        {averageTemp}°C
                     </Typography>
-                    <Typography variant="h5" color="inherit" className="GraphCardTitle">
-                        {averageHum}
+                    <Typography variant="h6" color="inherit" className="GraphCardTitle">
+                        {averageHum}%
                     </Typography>                    
                 </div>                              
             </Paper>
