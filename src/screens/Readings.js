@@ -87,7 +87,7 @@ class LoginPage extends React.Component {
     getMonthsFromYear = () => {
         var year = this.state.year;
         if (year !== null) {
-            fetch(`http://192.168.1.109:3000/api/dates/months?year=${year}`)
+            fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/dates/months?year=${year}`)
             .then(date => date.json())
             .then(res => {
                 this.setState({ monthsList: res});
@@ -100,7 +100,7 @@ class LoginPage extends React.Component {
     getDaysFromMonth = () => {
         var month = this.state.month;
         if (month !== null) {
-            fetch(`http://192.168.1.109:3000/api/dates/days?month=${month}`)
+            fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/dates/days?month=${month}`)
             .then(date => date.json())
             .then(res => {
                 this.setState({ daysList: res});
@@ -114,7 +114,7 @@ class LoginPage extends React.Component {
         const { dateFormed } = this.state;
 
         if ( dateFormed !== null) {
-            fetch(`http://192.168.1.109:3000/api/calculations/average?date=${this.state.dateFormed}`)
+            fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/calculations/average?date=${this.state.dateFormed}`)
             .then(date => date.json())
             .then(res => {
                 this.setState({ averageTemp: res.averageTemp, averageHum: res.averageHum});
@@ -125,7 +125,7 @@ class LoginPage extends React.Component {
     }
 
     getDataFromDate = () => {
-        fetch(`http://192.168.1.109:3000/api/readings?date=${this.state.dateFormed}`)
+        fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/readings?date=${this.state.dateFormed}`)
         .then(date => date.json())
         .then(res => {
             this.setState({ graphData: res});
