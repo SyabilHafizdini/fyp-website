@@ -17,6 +17,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableHead from '@material-ui/core/TableHead';
 import Paper from '@material-ui/core/Paper';
+import { Windmill } from 'react-activity';
 
 const styles = theme => ({
     root: {
@@ -49,6 +50,8 @@ class LoginPage extends React.Component {
             graphData: [],
             averageTemp: null,
             averageHum: null,
+            isLoading: false,
+
 
         };
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
@@ -86,11 +89,12 @@ class LoginPage extends React.Component {
 
     getMonthsFromYear = () => {
         var year = this.state.year;
+        this.setState({isLoading: true})
         if (year !== null) {
-            fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/dates/months?year=${year}`)
+            fetch(`http://192.168.1.109:3000/api/dates/months?year=${year}`)
             .then(date => date.json())
             .then(res => {
-                this.setState({ monthsList: res});
+                this.setState({ monthsList: res, isLoading: false});
             }).catch(function() {
                 console.log("error");
             });
@@ -99,11 +103,12 @@ class LoginPage extends React.Component {
 
     getDaysFromMonth = () => {
         var month = this.state.month;
+        this.setState({isLoading: true})
         if (month !== null) {
-            fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/dates/days?month=${month}`)
+            fetch(`http://192.168.1.109:3000/api/dates/days?month=${month}`)
             .then(date => date.json())
             .then(res => {
-                this.setState({ daysList: res});
+                this.setState({ daysList: res, isLoading: false});
             }).catch(function() {
                 console.log("error");
             });
@@ -112,12 +117,12 @@ class LoginPage extends React.Component {
 
     getAverageFromDate = () => {
         const { dateFormed } = this.state;
-
+        this.setState({isLoading: true})
         if ( dateFormed !== null) {
-            fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/calculations/average?date=${this.state.dateFormed}`)
+            fetch(`http://192.168.1.109:3000/api/calculations/average?date=${this.state.dateFormed}`)
             .then(date => date.json())
             .then(res => {
-                this.setState({ averageTemp: res.averageTemp, averageHum: res.averageHum});
+                this.setState({ averageTemp: res.averageTemp, averageHum: res.averageHum, isLoading: false});
             }).catch(function() {
                 console.log("error");
             });  
@@ -125,10 +130,11 @@ class LoginPage extends React.Component {
     }
 
     getDataFromDate = () => {
-        fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/readings?date=${this.state.dateFormed}`)
+        this.setState({isLoading: true})
+        fetch(`http://192.168.1.109:3000/api/readings?date=${this.state.dateFormed}`)
         .then(date => date.json())
         .then(res => {
-            this.setState({ graphData: res});
+            this.setState({ graphData: res, isLoading: false});
         }).catch(function() {
             console.log("error");
         });    
@@ -317,7 +323,7 @@ class LoginPage extends React.Component {
             </div>                    
         )
 
-        return(
+        const DisplayPage = (
             <div className="background">
                 {DisplayChart}
                 <div className="GraphCardHeader">
@@ -343,8 +349,10 @@ class LoginPage extends React.Component {
                         </CardContent>
                     </Card>
                 </div>
-            </div>
+            </div>            
         );
+
+        return DisplayPage;
     }
 }
 

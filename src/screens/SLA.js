@@ -46,7 +46,7 @@ class LoginPage extends React.Component {
     }
 
     componentDidMount() {
-        setInterval(this.getMonthsFromYear, 1000);
+        this.getMonthsFromYear();
         this.updateWindowDimensions();
         window.addEventListener('resize', this.updateWindowDimensions);
     }
@@ -66,7 +66,7 @@ class LoginPage extends React.Component {
     getMonthsFromYear = () => {
         var year = this.state.year;
         if (year !== null) {
-            fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/dates/months?year=${year}`)
+            fetch(`http://192.168.1.109:3000/api/dates/months?year=${year}`)
             .then(date => date.json())
             .then(res => {
                 this.setState({ monthsList: res});
@@ -79,7 +79,7 @@ class LoginPage extends React.Component {
     _sendEmail = () => {
         const { month, email } = this.state;
         if(month){
-            fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/email?month=${month}&email=${email}`)
+            fetch(`http://192.168.1.109:3000/api/email?month=${month}&email=${email}`)
             .then(this.setState({ reply: `Email sent  to: ${email}` }))
             .catch(function() {
                 console.log("error");

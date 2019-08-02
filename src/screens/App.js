@@ -120,7 +120,7 @@ class HomeContent extends React.Component {
   // our first get method that uses our backend api to 
   // fetch data from our data base
   getDataFromDb = () => {
-    fetch("http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/readings")
+    fetch("http://192.168.1.109:3000/api/readings")
       .then(data => data.json())
       .then(res => {
         this.setState({ data: res , lastEntry: res[0], graphData: res.slice(0, 5)});
@@ -130,7 +130,7 @@ class HomeContent extends React.Component {
   };
 
   getDatesFromDb = () => {
-    fetch("http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/dates")
+    fetch("http://192.168.1.109:3000/api/dates")
       .then(date => date.json())
       .then(res => {
         this.setState({ dates: res});
@@ -140,7 +140,7 @@ class HomeContent extends React.Component {
   }
 
   getDataFromDate = () => {
-    fetch(`http://ec2-18-138-254-44.ap-southeast-1.compute.amazonaws.com:3000/api/readings?date=${this.state.dateToShow}`)
+    fetch(`http://192.168.1.109:3000/api/readings?date=${this.state.dateToShow}`)
       .then(date => date.json())
       .then(res => {
         this.setState({ data: res , lastEntry: res[0], graphData: res.slice(0, 5)});
